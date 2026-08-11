@@ -1,0 +1,599 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SAS | Special Agency of Security</title>
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet">
+    
+    <!-- FontAwesome Hooks -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Lenis Smooth Scroll Engine -->
+    <script src="https://unpkg.com/@studio-freight/lenis@1.0.39/dist/lenis.min.js"></script>
+
+    <!-- Tailwind Framework Integration -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        heading: ['Playfair Display', 'serif'],
+                    },
+                    colors: {
+                        brand: {
+                            black: '#0a0a0a',
+                            gray: '#f9fafb',
+                            red: '#991b1b', 
+                            gold: '#b4975a'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body {
+            background-color: #ffffff;
+            color: #0a0a0a;
+            overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        html.lenis { height: auto; }
+        .lenis.lenis-smooth { scroll-behavior: auto !important; }
+        .lenis.lenis-smooth [data-lenis-prevent] { overscroll-behavior: contain; }
+        .lenis.lenis-stopped { overflow: hidden; }
+
+        /* Premium Wipe & Scale Slider System */
+        .slider-container { position: relative; width: 100%; height: 90vh; overflow: hidden; background: #000; }
+        .slide { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 1; opacity: 0; transition: opacity 0.6s ease-in-out; }
+        .slide.active { opacity: 1; z-index: 2; }
+        .slide-img-wrapper { position: absolute; top: 0; left: 0; width: 100%; height: 100%; clip-path: inset(0 0 0 100%); transition: clip-path 1.4s cubic-bezier(0.77, 0, 0.175, 1); }
+        .slide.active .slide-img-wrapper { clip-path: inset(0 0 0 0); }
+        .slide-img-wrapper::after { content: ''; position: absolute; inset: 0; background: linear-gradient(to right, rgba(0,0,0,0.85) 0%, rgba(0,0,0,0.4) 100%); z-index: 2; }
+        .kb-zoom-container { width: 100%; height: 100%; transform: scale(1.15); transition: transform 5.5s cubic-bezier(0.25, 0.46, 0.45, 0.94); }
+        .slide.active .kb-zoom-container { transform: scale(1); }
+        .slide img { width: 100%; height: 100%; object-fit: cover; }
+        .slide-content { position: relative; z-index: 3; height: 100%; display: flex; flex-direction: column; justify-content: center; }
+        
+        .slide-text-mask { overflow: hidden; padding-bottom: 4px; }
+        .slide-text-inner { transform: translateY(105%); opacity: 0; transition: transform 0.85s cubic-bezier(0.77, 0, 0.175, 1), opacity 0.85s ease; }
+        .slide.active .slide-text-inner { transform: translateY(0); opacity: 1; }
+        .slide.active .delay-1 { transition-delay: 0.4s; }
+        .slide.active .delay-2 { transition-delay: 0.6s; }
+        .slide.active .delay-3 { transition-delay: 0.8s; }
+
+        .slider-nav { position: absolute; bottom: 40px; left: 0; width: 100%; z-index: 10; }
+        .nav-item { width: 60px; height: 3px; background: rgba(255, 255, 255, 0.2); position: relative; overflow: hidden; cursor: pointer; }
+        .nav-item-progress { position: absolute; top: 0; left: 0; height: 100%; width: 0%; background: #b4975a; }
+        .nav-item.active .nav-item-progress { width: 100%; transition: width 5s linear; }
+        
+        .parallax-wrapper { overflow: hidden; position: relative; }
+        
+        /* Table Custom Styling */
+        .pricing-table th { background-color: #0a0a0a; color: white; font-family: 'Inter', sans-serif; text-transform: uppercase; letter-spacing: 0.1em; font-size: 0.75rem; padding: 1rem; }
+        .pricing-table td { padding: 1rem; border-bottom: 1px solid #e5e7eb; font-size: 0.875rem; color: #374151; }
+        .pricing-table tr:hover { background-color: #f9fafb; }
+
+        #mobile-menu { transform: translateX(100%); transition: transform 0.5s cubic-bezier(0.77, 0, 0.175, 1); }
+        #mobile-menu.open { transform: translateX(0); }
+    </style>
+</head>
+<body class="antialiased">
+
+    <!-- Navbar -->
+    <nav class="fixed w-full top-0 z-40 bg-white/95 backdrop-blur-md border-b border-gray-100 transition-all duration-300">
+        <div class="max-w-7xl mx-auto px-6 h-24 flex items-center justify-between">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 bg-brand-black text-white flex items-center justify-center font-heading font-bold text-lg rounded-sm">SAS</div>
+                <div class="flex flex-col">
+                    <span class="text-[10px] tracking-[0.2em] uppercase font-bold text-gray-500">Special Agency Of</span>
+                    <span class="text-sm tracking-wider uppercase font-black text-brand-black">Security</span>
+                </div>
+            </div>
+            
+            <div class="hidden md:flex gap-8 text-xs font-semibold tracking-widest uppercase text-gray-500">
+                <a href="#services" class="hover:text-brand-gold transition-colors">Expertise</a>
+                <a href="#compliance" class="hover:text-brand-gold transition-colors">Compliance</a>
+                <a href="#pricing" class="hover:text-brand-gold transition-colors">Tariffs</a>
+                <a href="#clients" class="hover:text-brand-gold transition-colors">Clients</a>
+                <a href="#gallery" class="hover:text-brand-gold transition-colors">Gallery</a>
+            </div>
+
+            <div class="flex items-center gap-4">
+                <a href="tel:9329414248" class="hidden md:block px-6 py-3 bg-brand-black text-white text-xs font-bold uppercase tracking-widest hover:bg-brand-gold transition-colors rounded-sm">
+                    Command Center
+                </a>
+                <button id="menu-toggle-open" class="md:hidden text-brand-black p-2 focus:outline-none">
+                    <i class="fas fa-bars text-xl"></i>
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Mobile Menu -->
+    <div id="mobile-menu" class="fixed inset-y-0 right-0 w-full sm:w-80 bg-brand-black text-white z-50 p-8 flex flex-col justify-between shadow-2xl">
+        <div>
+            <div class="flex items-center justify-between border-b border-gray-800 pb-6 mb-8">
+                <span class="font-heading font-bold text-xl tracking-wider text-brand-gold">SAS MENU</span>
+                <button id="menu-toggle-close" class="text-gray-400 hover:text-white p-2 text-xl focus:outline-none"><i class="fas fa-times"></i></button>
+            </div>
+            <div class="flex flex-col gap-6 text-lg font-heading tracking-wide">
+                <a href="#services" class="mobile-link hover:text-brand-gold transition-colors">Expertise</a>
+                <a href="#compliance" class="mobile-link hover:text-brand-gold transition-colors">Compliance</a>
+                <a href="#pricing" class="mobile-link hover:text-brand-gold transition-colors">Tariffs</a>
+                <a href="#clients" class="mobile-link hover:text-brand-gold transition-colors">Client Portfolio</a>
+                <a href="#gallery" class="mobile-link hover:text-brand-gold transition-colors">Gallery</a>
+            </div>
+        </div>
+        <div class="border-t border-gray-800 pt-6 space-y-4">
+            <a href="tel:9329414248" class="w-full inline-block text-center py-4 bg-brand-gold text-brand-black font-bold text-xs uppercase tracking-widest rounded-sm">Call: 9329414248</a>
+            <a href="tel:7000525797" class="w-full inline-block text-center py-4 border border-brand-gold text-brand-gold font-bold text-xs uppercase tracking-widest rounded-sm">Call: 7000525797</a>
+        </div>
+    </div>
+
+    <!-- Hero Slider -->
+    <section class="slider-container" id="about">
+        <!-- Slide 1 -->
+        <div class="slide active" data-slide="0">
+            <div class="slide-img-wrapper"><div class="kb-zoom-container"><img src="https://images.unsplash.com/photo-1541888081622-c36190b4d450?q=80&w=1600" alt="Industrial Security"></div></div>
+            <div class="slide-content max-w-7xl mx-auto px-6">
+                <div class="max-w-3xl">
+                    <div class="slide-text-mask mb-4"><div class="slide-text-inner delay-1 text-brand-gold text-xs font-bold tracking-[0.3em] uppercase">Total Security Solutions</div></div>
+                    <div class="slide-text-mask mb-6"><h1 class="slide-text-inner delay-2 text-5xl md:text-7xl font-heading font-bold text-white leading-tight">We Make Your Workplace <br><span class="italic font-light">A Secure Place.</span></h1></div>
+                    <div class="slide-text-mask"><div class="slide-text-inner delay-3"><a href="#services" class="inline-block px-8 py-4 bg-white text-brand-black text-xs font-bold tracking-widest uppercase hover:bg-gray-100 transition-colors">View Core Expertise</a></div></div>
+                </div>
+            </div>
+        </div>
+        <!-- Slide 2 -->
+        <div class="slide" data-slide="1">
+            <div class="slide-img-wrapper"><div class="kb-zoom-container"><img src="https://images.unsplash.com/photo-1497366216548-37526070297c?q=80&w=1600" alt="Corporate Security"></div></div>
+            <div class="slide-content max-w-7xl mx-auto px-6">
+                <div class="max-w-3xl">
+                    <div class="slide-text-mask mb-4"><div class="slide-text-inner delay-1 text-brand-gold text-xs font-bold tracking-[0.3em] uppercase">Enterprise Risk Mitigation</div></div>
+                    <div class="slide-text-mask mb-6"><h1 class="slide-text-inner delay-2 text-5xl md:text-7xl font-heading font-bold text-white leading-tight">Absolute Discretion. <br><span class="italic font-light">Total Control.</span></h1></div>
+                </div>
+            </div>
+        </div>
+        <!-- Nav -->
+        <div class="slider-nav"><div class="max-w-7xl mx-auto px-6 flex gap-4" id="nav-container"></div></div>
+    </section>
+
+    <!-- Core Services / Expertise Modules -->
+    <section id="services" class="py-24 px-6 bg-brand-gray border-b border-gray-200">
+        <div class="max-w-7xl mx-auto space-y-16">
+            <div class="flex flex-col md:flex-row justify-between items-end gap-8">
+                <div class="space-y-4 max-w-2xl">
+                    <span class="text-gray-500 text-xs font-bold tracking-[0.2em] uppercase">Operational Domains</span>
+                    <h2 class="text-4xl md:text-5xl font-heading font-bold text-brand-black tracking-tight leading-tight">Consulting & <br><span class="italic font-light">Tactical Deployments.</span></h2>
+                </div>
+                <p class="text-gray-600 font-light max-w-md text-sm leading-relaxed pb-2">Providing combinations of man and machine. We conduct thorough surveys, establish Standard Operating Procedures (SOP), and mitigate risk across all sectors.</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                <!-- Service Cards -->
+                <div class="bg-white p-8 border border-gray-200 rounded-sm hover:shadow-xl hover:border-brand-gold transition-all duration-300">
+                    <i class="fas fa-building text-3xl text-brand-gold mb-6"></i>
+                    <h3 class="font-heading font-bold text-xl mb-3">Corporate & Commercial</h3>
+                    <p class="text-sm text-gray-500 font-light">Shopping Malls, Hospitals, and complex multi-level commercial architectures.</p>
+                </div>
+                <div class="bg-white p-8 border border-gray-200 rounded-sm hover:shadow-xl hover:border-brand-gold transition-all duration-300">
+                    <i class="fas fa-industry text-3xl text-brand-gold mb-6"></i>
+                    <h3 class="font-heading font-bold text-xl mb-3">Industrial & Construction</h3>
+                    <p class="text-sm text-gray-500 font-light">Factory perimeters, heavy machinery construction sites, and raw material logistics.</p>
+                </div>
+                <div class="bg-white p-8 border border-gray-200 rounded-sm hover:shadow-xl hover:border-brand-gold transition-all duration-300">
+                    <i class="fas fa-users-viewfinder text-3xl text-brand-gold mb-6"></i>
+                    <h3 class="font-heading font-bold text-xl mb-3">Event & Crowd Control</h3>
+                    <p class="text-sm text-gray-500 font-light">Trade shows, VIP Executive Protection, front/back stage management, and traffic regulation.</p>
+                </div>
+                <div class="bg-white p-8 border border-gray-200 rounded-sm hover:shadow-xl hover:border-brand-gold transition-all duration-300">
+                    <i class="fas fa-house-chimney-crack text-3xl text-brand-gold mb-6"></i>
+                    <h3 class="font-heading font-bold text-xl mb-3">Crisis & Disaster Mgmt</h3>
+                    <p class="text-sm text-gray-500 font-light">Fire safety solutions, bomb threat evacuation protocols, and emergency risk mitigation.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Detailed Compliance Section -->
+    <section id="compliance" class="py-24 px-6 bg-white border-b border-gray-200">
+        <div class="max-w-7xl mx-auto grid lg:grid-cols-2 gap-20">
+            
+            <div class="space-y-10">
+                <div class="space-y-4">
+                    <span class="text-brand-gold text-xs font-bold tracking-[0.2em] uppercase">Corporate Transparency</span>
+                    <h2 class="text-3xl md:text-5xl font-heading font-bold text-brand-black tracking-tight">Statutory Framework.</h2>
+                    <p class="text-sm text-gray-600 font-light leading-relaxed">Our company is registered under various legal acts and statutory provisions to cover employees under ESIC & PF, ensuring maximum service benefits and shielding our clients from liabilities.</p>
+                </div>
+                
+                <div class="grid sm:grid-cols-2 gap-4">
+                    <div class="p-6 border border-gray-200 rounded-sm bg-gray-50">
+                        <span class="text-[10px] uppercase tracking-widest text-gray-500 font-bold block mb-1">PSA License</span>
+                        <span class="font-mono text-sm font-semibold text-brand-black">PSA/L/16MP/2024/FEB/3/752</span>
+                        <span class="text-xs text-gray-400 block mt-2">Valid: 01/03/2024 to 28/02/2029</span>
+                    </div>
+                    <div class="p-6 border border-gray-200 rounded-sm bg-gray-50">
+                        <span class="text-[10px] uppercase tracking-widest text-gray-500 font-bold block mb-1">GSTIN Number</span>
+                        <span class="font-mono text-sm font-semibold text-brand-black">23DHVPS0327B1ZF</span>
+                    </div>
+                    <div class="p-6 border border-gray-200 rounded-sm bg-gray-50">
+                        <span class="text-[10px] uppercase tracking-widest text-gray-500 font-bold block mb-1">PAN Number</span>
+                        <span class="font-mono text-sm font-semibold text-brand-black">DHVPS0327B</span>
+                    </div>
+                    <div class="p-6 border border-gray-200 rounded-sm bg-gray-50">
+                        <span class="text-[10px] uppercase tracking-widest text-gray-500 font-bold block mb-1">EPFO Code</span>
+                        <span class="font-mono text-sm font-semibold text-brand-black">MPUJJ2349982000</span>
+                    </div>
+                    <div class="p-6 border border-gray-200 rounded-sm bg-gray-50">
+                        <span class="text-[10px] uppercase tracking-widest text-gray-500 font-bold block mb-1">ESIC Reg No.</span>
+                        <span class="font-mono text-sm font-semibold text-brand-black">18000376090000999</span>
+                    </div>
+                    <div class="p-6 border border-gray-200 rounded-sm bg-gray-50">
+                        <span class="text-[10px] uppercase tracking-widest text-gray-500 font-bold block mb-1">Certifications</span>
+                        <span class="font-mono text-sm font-semibold text-brand-black">ISO & MSME (Under Process)</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Standard Terms Accordion -->
+            <div class="space-y-6 lg:pt-16">
+                <h3 class="text-2xl font-heading font-bold border-b border-gray-200 pb-4">Standard Terms & Conditions</h3>
+                <ul class="space-y-6 text-sm text-gray-600 font-light">
+                    <li class="flex gap-4 items-start">
+                        <i class="fas fa-check text-brand-gold mt-1"></i>
+                        <p><strong class="text-brand-black font-semibold">Wage Revisions:</strong> Rate will be revised automatically strictly in accordance with the revision of minimum wages as applicable in the state of Madhya Pradesh.</p>
+                    </li>
+                    <li class="flex gap-4 items-start">
+                        <i class="fas fa-check text-brand-gold mt-1"></i>
+                        <p><strong class="text-brand-black font-semibold">Taxation:</strong> GST as per government norms (currently 18%) will be charged extra as applicable on the final billing amount.</p>
+                    </li>
+                    <li class="flex gap-4 items-start">
+                        <i class="fas fa-check text-brand-gold mt-1"></i>
+                        <p><strong class="text-brand-black font-semibold">Payment Schedule:</strong> Payment should be made within 10 days after the submission of monthly bills along with all statutory compliances.</p>
+                    </li>
+                    <li class="flex gap-4 items-start">
+                        <i class="fas fa-check text-brand-gold mt-1"></i>
+                        <p><strong class="text-brand-black font-semibold">Legal Jurisdiction:</strong> All operational disputes are strictly subject to Indore Jurisdiction only.</p>
+                    </li>
+                </ul>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- Pricing / Tariff Data Table Section -->
+    <section id="pricing" class="py-24 px-6 bg-brand-gray border-b border-gray-200">
+        <div class="max-w-7xl mx-auto space-y-12">
+            <div class="text-center space-y-4 max-w-2xl mx-auto">
+                <span class="text-brand-gold text-xs font-bold tracking-[0.2em] uppercase">Commercials</span>
+                <h2 class="text-3xl font-heading font-bold text-brand-black tracking-tight">Tariff Schedule (2025-2026).</h2>
+                <p class="text-sm text-gray-500 font-light">Rates Break Up as per Minimum Wages M.P. Govt. w.e.f. 01.04.2025 (12 Hrs / 30-31 Days).</p>
+            </div>
+
+            <div class="overflow-x-auto rounded-sm border border-gray-200 shadow-sm bg-white">
+                <table class="w-full text-left border-collapse pricing-table">
+                    <thead>
+                        <tr>
+                            <th>Particulars</th>
+                            <th>In %</th>
+                            <th>Security Guard (Un-Skilled)</th>
+                            <th>Security Supervisor (Semi-Skilled)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr class="font-semibold bg-gray-50">
+                            <td>Minimum Wages Per Day</td>
+                            <td>-</td>
+                            <td>₹ 466.35</td>
+                            <td>₹ 504.66</td>
+                        </tr>
+                        <tr>
+                            <td>1. Minimum Wages (8 Hours / 26 Days)</td>
+                            <td>-</td>
+                            <td>₹ 12,125</td>
+                            <td>₹ 13,121</td>
+                        </tr>
+                        <tr>
+                            <td>2. Relieving Charges</td>
+                            <td>-</td>
+                            <td>₹ 5,000</td>
+                            <td>₹ 6,000</td>
+                        </tr>
+                        <tr class="font-bold bg-gray-50 text-brand-black">
+                            <td>Sub Total (A)</td>
+                            <td>-</td>
+                            <td>₹ 17,125</td>
+                            <td>₹ 19,121</td>
+                        </tr>
+                        <tr>
+                            <td>3. EPF Contribution Employer</td>
+                            <td>13%</td>
+                            <td>₹ 1,576</td>
+                            <td>₹ 1,706</td>
+                        </tr>
+                        <tr>
+                            <td>4. ESIC Contribution Employer</td>
+                            <td>3.25%</td>
+                            <td>₹ 557</td>
+                            <td>₹ 621</td>
+                        </tr>
+                        <tr>
+                            <td>5. Bonus Allowance on Basic</td>
+                            <td>8.33%</td>
+                            <td>₹ 0</td>
+                            <td>₹ 0</td>
+                        </tr>
+                        <tr>
+                            <td>6. HRA Allowance</td>
+                            <td>-</td>
+                            <td>₹ 0</td>
+                            <td>₹ 500</td>
+                        </tr>
+                        <tr class="font-bold bg-gray-50 text-brand-black">
+                            <td>Sub Total (B)</td>
+                            <td>-</td>
+                            <td>₹ 2,133</td>
+                            <td>₹ 2,827</td>
+                        </tr>
+                        <tr class="border-t-2 border-brand-black">
+                            <td class="font-bold">Total (A + B)</td>
+                            <td>-</td>
+                            <td class="font-bold">₹ 19,258</td>
+                            <td class="font-bold">₹ 21,948</td>
+                        </tr>
+                        <tr>
+                            <td>Service Charge</td>
+                            <td>10%</td>
+                            <td>₹ 1,713</td>
+                            <td>₹ 1,912</td>
+                        </tr>
+                        <tr class="bg-brand-black text-white font-bold text-lg">
+                            <td>Grand Total (Per Month)</td>
+                            <td>-</td>
+                            <td class="text-brand-gold">₹ 20,970</td>
+                            <td class="text-brand-gold">₹ 23,860</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </section>
+
+    <!-- Expanded Esteemed Clientele Portfolio -->
+    <section id="clients" class="py-24 px-6 bg-white border-b border-gray-200">
+        <div class="max-w-7xl mx-auto space-y-12">
+            <div class="space-y-4">
+                <span class="text-gray-500 text-xs font-bold tracking-[0.2em] uppercase">Active Deployments</span>
+                <h2 class="text-3xl md:text-4xl font-heading font-bold text-brand-black tracking-tight">Esteemed Clientele Portfolio.</h2>
+                <p class="text-sm text-gray-600 font-light">It is our pleasure to serve organizations with loyalty. We are trusted by over 40 distinct commercial, industrial, and residential entities.</p>
+            </div>
+
+            <!-- Dense Multi-Column Grid for massive client list -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-x-8 gap-y-4 text-xs font-medium text-gray-700">
+                <div class="flex items-center gap-2"><div class="w-1 h-1 bg-brand-gold rounded-full"></div>Iskcon Temple Ujjain</div>
+                <div class="flex items-center gap-2"><div class="w-1 h-1 bg-gray-300 rounded-full"></div>Amarnath Avenue Society</div>
+                <div class="flex items-center gap-2"><div class="w-1 h-1 bg-gray-300 rounded-full"></div>Bochem Healthcare Pvt. Ltd</div>
+                <div class="flex items-center gap-2"><div class="w-1 h-1 bg-gray-300 rounded-full"></div>Danish Health Care Pvt. Ltd</div>
+                <div class="flex items-center gap-2"><div class="w-1 h-1 bg-gray-300 rounded-full"></div>Shreeji Hospital</div>
+                <div class="flex items-center gap-2"><div class="w-1 h-1 bg-gray-300 rounded-full"></div>Tirupati Dreams Society</div>
+                <div class="flex items-center gap-2"><div class="w-1 h-1 bg-gray-300 rounded-full"></div>Tirupati Pride 30 Society</div>
+                <div class="flex items-center gap-2"><div class="w-1 h-1 bg-gray-300 rounded-full"></div>Shri Vishnu City Society</div>
+                <div class="flex items-center gap-2"><div class="w-1 h-1 bg-brand-gold rounded-full"></div>Millinium Steal Industry Bhopal</div>
+                <div class="flex items-center gap-2"><div class="w-1 h-1 bg-gray-300 rounded-full"></div>Heera Industries Maxi Rd</div>
+                <div class="flex items-center gap-2"><div class="w-1 h-1 bg-gray-300 rounded-full"></div>Vidora Pub Indore</div>
+                <div class="flex items-center gap-2"><div class="w-1 h-1 bg-gray-300 rounded-full"></div>Vijay Cotton & Fibre Co</div>
+                <div class="flex items-center gap-2"><div class="w-1 h-1 bg-gray-300 rounded-full"></div>Spy 99 Cosmos Mall</div>
+                <div class="flex items-center gap-2"><div class="w-1 h-1 bg-gray-300 rounded-full"></div>Tirupati Vista Ujjain</div>
+                <div class="flex items-center gap-2"><div class="w-1 h-1 bg-gray-300 rounded-full"></div>Krishna Vihar</div>
+                <div class="flex items-center gap-2"><div class="w-1 h-1 bg-gray-300 rounded-full"></div>Think Farma Pithmpur</div>
+                <div class="flex items-center gap-2"><div class="w-1 h-1 bg-gray-300 rounded-full"></div>Sawariya Sandwich</div>
+                <div class="flex items-center gap-2"><div class="w-1 h-1 bg-gray-300 rounded-full"></div>Coffee Club Restaurant</div>
+                <div class="flex items-center gap-2"><div class="w-1 h-1 bg-gray-300 rounded-full"></div>Circle Cafe</div>
+                <div class="flex items-center gap-2"><div class="w-1 h-1 bg-gray-300 rounded-full"></div>Hotel Kosa Ora</div>
+                <div class="flex items-center gap-2"><div class="w-1 h-1 bg-gray-300 rounded-full"></div>Hotel & Resort Gourishan</div>
+                <div class="flex items-center gap-2"><div class="w-1 h-1 bg-gray-300 rounded-full"></div>Hotel & Restuorent Sarveshram</div>
+                <div class="flex items-center gap-2"><div class="w-1 h-1 bg-gray-300 rounded-full"></div>Restourent Damru Wala</div>
+                <div class="flex items-center gap-2"><div class="w-1 h-1 bg-gray-300 rounded-full"></div>Chai Coffee</div>
+                <div class="flex items-center gap-2"><div class="w-1 h-1 bg-gray-300 rounded-full"></div>Tripati Infra</div>
+                <div class="flex items-center gap-2"><div class="w-1 h-1 bg-gray-300 rounded-full"></div>Tripati Estate / Real State</div>
+                <div class="flex items-center gap-2"><div class="w-1 h-1 bg-gray-300 rounded-full"></div>Ca & Real State Offices</div>
+                <div class="flex items-center gap-2"><div class="w-1 h-1 bg-gray-300 rounded-full"></div>Tripati Solitar / Park / Grand</div>
+                <div class="flex items-center gap-2"><div class="w-1 h-1 bg-gray-300 rounded-full"></div>Tripati Crestal A, B & Premium</div>
+                <div class="flex items-center gap-2"><div class="w-1 h-1 bg-gray-300 rounded-full"></div>Tripati Emrolled & Realitise</div>
+                <div class="flex items-center gap-2"><div class="w-1 h-1 bg-gray-300 rounded-full"></div>Shree Ram Jewellers</div>
+                <div class="flex items-center gap-2"><div class="w-1 h-1 bg-gray-300 rounded-full"></div>Vashis Ji Banglo</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Parallax Image Gallery Architecture (Ready for Local Images) -->
+    <section id="gallery" class="py-24 px-6 overflow-hidden bg-brand-black">
+        <div class="max-w-7xl mx-auto space-y-12">
+            <div class="text-center space-y-4 max-w-2xl mx-auto">
+                <span class="text-brand-gold text-xs font-bold tracking-[0.2em] uppercase">Field Operations</span>
+                <h2 class="text-3xl font-heading font-bold text-white tracking-tight">Tactical Imagery.</h2>
+                <p class="text-sm text-gray-400 font-light">Visuals from our live deployments at Tirupati Vista, Vishnu City, and Event Management fronts.</p>
+            </div>
+
+            <!-- Massive Collage Grid -->
+            <!-- REPLACE THE 'src' URLS BELOW WITH YOUR LOCAL IMAGES FROM THE PDF -->
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-4 md:auto-rows-[250px]">
+                
+                <div class="parallax-wrapper md:col-span-2 md:row-span-2 rounded-sm group relative overflow-hidden h-[300px] md:h-full shadow-md">
+                    <img src="https://images.unsplash.com/photo-1541888081622-c36190b4d450?q=80&w=1200" alt="Industrial Guarding" data-speed="0.08" class="parallax-img w-full h-[140%] -mt-[20%] object-cover filter grayscale hover:grayscale-0 transition-[filter] duration-700">
+                    <div class="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-8">
+                        <span class="text-white font-heading font-bold text-xl text-brand-gold">Industrial Protocol</span>
+                    </div>
+                </div>
+
+                <div class="parallax-wrapper md:col-span-1 md:row-span-1 rounded-sm group relative overflow-hidden h-[250px] md:h-full shadow-md">
+                    <img src="https://images.unsplash.com/photo-1521791136368-1a46827743f9?q=80&w=800" alt="Crowd Control" data-speed="0.04" class="parallax-img w-full h-[140%] -mt-[20%] object-cover filter grayscale hover:grayscale-0 transition-[filter] duration-700">
+                    <div class="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-6">
+                        <span class="text-white font-heading font-bold text-sm text-brand-gold">Crowd Management</span>
+                    </div>
+                </div>
+
+                <div class="parallax-wrapper md:col-span-1 md:row-span-1 rounded-sm group relative overflow-hidden h-[250px] md:h-full shadow-md">
+                    <img src="https://images.unsplash.com/photo-1600585154340-be6161a56a0c?q=80&w=800" alt="CCTV Room" data-speed="0.06" class="parallax-img w-full h-[140%] -mt-[20%] object-cover filter grayscale hover:grayscale-0 transition-[filter] duration-700">
+                    <div class="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-6">
+                        <span class="text-white font-heading font-bold text-sm text-brand-gold">Digital CCTV Room</span>
+                    </div>
+                </div>
+
+                <div class="parallax-wrapper md:col-span-2 md:row-span-1 rounded-sm group relative overflow-hidden h-[250px] md:h-full shadow-md">
+                    <img src="https://images.unsplash.com/photo-1577962917302-cd874c4e31d2?q=80&w=1200" alt="VIP Security" data-speed="0.05" class="parallax-img w-full h-[140%] -mt-[20%] object-cover filter grayscale hover:grayscale-0 transition-[filter] duration-700">
+                    <div class="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-6">
+                        <span class="text-white font-heading font-bold text-sm text-brand-gold">VIP & Executive Bouncers</span>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-brand-black text-white pt-20 pb-10 px-6 border-t border-gray-900">
+        <div class="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-start gap-12 border-b border-gray-800 pb-12 mb-8">
+            <div class="max-w-sm">
+                <div class="text-3xl font-heading font-bold mb-2 text-brand-gold">SAS.</div>
+                <div class="text-[10px] uppercase tracking-widest text-gray-500 font-bold mb-6">Special Agency of Security</div>
+                <p class="text-xs text-gray-400 font-light leading-relaxed mb-6">We hope to give you an opportunity to serve your organization and assure you of our best attention and services at all times.</p>
+                <div class="space-y-1">
+                    <a href="mailto:sunilsharma9329@gmail.com" class="block text-sm font-semibold hover:text-brand-gold transition-colors"><i class="fas fa-envelope w-6"></i> sunilsharma9329@gmail.com</a>
+                    <a href="tel:9329414248" class="block text-sm font-semibold hover:text-brand-gold transition-colors"><i class="fas fa-phone w-6"></i> +91 93294 14248</a>
+                    <a href="tel:7000525797" class="block text-sm font-semibold hover:text-brand-gold transition-colors"><i class="fas fa-phone w-6"></i> +91 70005 25797</a>
+                </div>
+            </div>
+            
+            <div class="flex gap-16 text-sm">
+                <div class="flex flex-col gap-3 font-light text-gray-400">
+                    <span class="text-xs font-bold tracking-widest uppercase text-white mb-2">Proprietor / Headquarters</span>
+                    <p class="text-brand-gold font-bold">Sunil Sharma</p>
+                    <p>MIG A/10, Alakhananda</p>
+                    <p>Near Cosmos Mall</p>
+                    <p>Ujjain, MP 456010</p>
+                </div>
+            </div>
+        </div>
+        <div class="max-w-7xl mx-auto text-[10px] text-gray-600 font-light flex flex-col md:flex-row justify-between gap-4 uppercase tracking-widest">
+            <p>&copy; 2026 Special Agency of Security. All rights reserved.</p>
+            <p>Subject to Indore Jurisdiction.</p>
+        </div>
+    </footer>
+
+    <!-- Execution Scripts -->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            
+            // 1. Smooth Scroll Engine Setup
+            const lenis = new Lenis({
+                duration: 1.2,
+                easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+                smooth: true,
+                direction: 'vertical'
+            });
+
+            function raf(time) {
+                lenis.raf(time);
+                requestAnimationFrame(raf);
+            }
+            requestAnimationFrame(raf);
+
+            // 2. Safe Parallax Engine Calculations
+            const parallaxImages = document.querySelectorAll('.parallax-img');
+            lenis.on('scroll', (e) => {
+                parallaxImages.forEach(img => {
+                    const speed = parseFloat(img.getAttribute('data-speed')) || 0.05;
+                    const wrapper = img.closest('.parallax-wrapper');
+                    if(!wrapper) return;
+                    
+                    const rect = wrapper.getBoundingClientRect();
+                    if(rect.top < window.innerHeight && rect.bottom > 0) {
+                        const center = window.innerHeight / 2;
+                        const elementCenter = rect.top + rect.height / 2;
+                        const distance = elementCenter - center;
+                        img.style.transform = `translateY(${distance * speed}px)`;
+                    }
+                });
+            });
+
+            // 3. Slider Engine Logic
+            const slides = document.querySelectorAll('.slide');
+            const navContainer = document.getElementById('nav-container');
+            let currentSlide = 0;
+            const slideDuration = 5500;
+            let slideInterval;
+
+            slides.forEach((_, index) => {
+                const navItem = document.createElement('div');
+                navItem.className = `nav-item`;
+                navItem.innerHTML = '<div class="nav-item-progress"></div>';
+                
+                navItem.addEventListener('click', () => {
+                    clearInterval(slideInterval);
+                    goToSlide(index);
+                    startSlider();
+                });
+                navContainer.appendChild(navItem);
+            });
+
+            const navItems = document.querySelectorAll('.nav-item');
+
+            function goToSlide(index) {
+                slides.forEach(slide => slide.classList.remove('active'));
+                navItems.forEach(nav => {
+                    nav.classList.remove('active');
+                    nav.querySelector('.nav-item-progress').style.width = '0%';
+                });
+                
+                currentSlide = index;
+                slides[currentSlide].classList.add('active');
+                
+                void navItems[currentSlide].offsetWidth; 
+                navItems[currentSlide].classList.add('active');
+            }
+
+            function nextSlide() {
+                let next = (currentSlide + 1) % slides.length;
+                goToSlide(next);
+            }
+
+            function startSlider() {
+                goToSlide(currentSlide);
+                slideInterval = setInterval(nextSlide, slideDuration);
+            }
+
+            startSlider();
+
+            // 4. Responsive Drawer Controls Execution
+            const mobileMenu = document.getElementById('mobile-menu');
+            const menuToggleOpen = document.getElementById('menu-toggle-open');
+            const menuToggleClose = document.getElementById('menu-toggle-close');
+            const mobileLinks = document.querySelectorAll('.mobile-link');
+
+            function openMenu() {
+                mobileMenu.classList.add('open');
+                lenis.stop(); 
+            }
+
+            function closeMenu() {
+                mobileMenu.classList.remove('open');
+                lenis.start(); 
+            }
+
+            menuToggleOpen.addEventListener('click', openMenu);
+            menuToggleClose.addEventListener('click', closeMenu);
+            mobileLinks.forEach(link => link.addEventListener('click', closeMenu));
+        });
+    </script>
+</body>
+</html>
